@@ -39,10 +39,10 @@ void main() {
 
     print("${verde}TIME 1 - ataque${reset}"); //mensagem do turno
 
-    stdout.write("Linha (0-15): ");
+    stdout.write("Linha (0-15): "); //define as coordenadas da linha
     int linha = int.parse(stdin.readLineSync()!);
 
-    stdout.write("Coluna (0-15): ");
+    stdout.write("Coluna (0-15): "); //define as coordenadas da coluna
     int coluna = int.parse(stdin.readLineSync()!);
 
     if (linha == navioTime2.linha && coluna == navioTime2.coluna) {
@@ -61,10 +61,10 @@ void main() {
 
     print("${amarelo}TIME 2 - ataque${reset}");
 
-    stdout.write("Linha (0-15): ");
+    stdout.write("Linha (0-15): "); //define as coordenadas da linha para o time 2
     linha = int.parse(stdin.readLineSync()!);
 
-    stdout.write("Coluna (0-15): ");
+    stdout.write("Coluna (0-15): "); //define as coordenadas da coluna para o time 2
     coluna = int.parse(stdin.readLineSync()!);
 
     if (linha == navioTime1.linha && coluna == navioTime1.coluna) {
@@ -99,14 +99,14 @@ void mostrarTabuleiro(List<List<String>> tabuleiro) {
 
       String valor = tabuleiro[i][j];
 
-      if (valor == "X") {
+      if (valor == "X") { //se for X, imprime em vermelho, se for O, amarelo, senão azul.
         stdout.write("${vermelho}X${reset} ");
       } 
       else if (valor == "O") {
-        stdout.write("${amarelo}O${reset} ");
+        stdout.write("${amarelo}O${reset} "); //marca os erros em amarelo para destacar, já que o mar é azul. O X é vermelho para destacar o acerto.
       } 
       else {
-        stdout.write("${azul}~${reset} ");
+        stdout.write("${azul}~${reset} "); //mar é azul
       }
 
     }
