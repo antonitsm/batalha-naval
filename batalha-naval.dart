@@ -18,12 +18,13 @@ void main() {
     (_) => List.generate(tamanho, (_) => "~"),
   );
 
-//cria o gerador de números aleatórios usado para sortear navios. Os navios são préviamente definidos pelo sistema.
-  Random random = Random();
+// agora os próprios jogadores escolhem onde posicionar seus navios
+// isso substitui o uso de posições aleatórias
+  print("${verde}TIME 1 - escolha posição do navio${reset}");
+  Ponto navioTime1 = lerPonto();
 
-//gera coordenadas aleatórias para cada navio (Obs: pode ocorrer colisão aqui).
-  Ponto navioTime1 = Ponto(random.nextInt(tamanho), random.nextInt(tamanho));
-  Ponto navioTime2 = Ponto(random.nextInt(tamanho), random.nextInt(tamanho));
+  print("${amarelo}TIME 2 - escolha posição do navio${reset}");
+  Ponto navioTime2 = lerPonto();
 
 //placar dos times, que é incrementado quando um navio é acertado. O jogo termina quando um dos times acerta o navio do adversário.
   int placar1 = 0;
@@ -37,43 +38,37 @@ void main() {
 
     mostrarTabuleiro(tabuleiro);
 
-    print("${verde}TIME 1 - ataque${reset}"); //mensagem do turno
+    print("${verde}TIME 1 - ataque${reset}");
 
-    stdout.write("Linha (0-15): "); //define as coordenadas da linha
-    int linha = int.parse(stdin.readLineSync()!);
+    Ponto ataque1 = lerPonto();
 
-    stdout.write("Coluna (0-15): "); //define as coordenadas da coluna
-    int coluna = int.parse(stdin.readLineSync()!);
-
-    if (linha == navioTime2.linha && coluna == navioTime2.coluna) {
+    if (ataque1.linha == navioTime2.linha &&
+        ataque1.coluna == navioTime2.coluna) {
       print("${verde}Time 1 acertou o navio!${reset}");
-      tabuleiro[linha][coluna] = "X"; //se acertou, marca com X e incrementa o placar.
+      tabuleiro[ataque1.linha][ataque1.coluna] = "X";
       placar1++;
       jogo = false;
     } else {
-      tabuleiro[linha][coluna] = "O";// se errou, marca com O.
+      tabuleiro[ataque1.linha][ataque1.coluna] = "1"; // ataque time 1
       print("${vermelho}Time 1 errou.${reset}");
     }
 
-    if (!jogo) break; //se Time 1 acertou, sai do loop antes do turno do Time 2
+    if (!jogo) break;
 
-    mostrarTabuleiro(tabuleiro); //exibe antes do turno do Time 2
+    mostrarTabuleiro(tabuleiro);
 
     print("${amarelo}TIME 2 - ataque${reset}");
 
-    stdout.write("Linha (0-15): "); //define as coordenadas da linha para o time 2
-    linha = int.parse(stdin.readLineSync()!);
+    Ponto ataque2 = lerPonto();
 
-    stdout.write("Coluna (0-15): "); //define as coordenadas da coluna para o time 2
-    coluna = int.parse(stdin.readLineSync()!);
-
-    if (linha == navioTime1.linha && coluna == navioTime1.coluna) {
+    if (ataque2.linha == navioTime1.linha &&
+        ataque2.coluna == navioTime1.coluna) {
       print("${amarelo}Time 2 acertou o navio!${reset}");
-      tabuleiro[linha][coluna] = "X";
+      tabuleiro[ataque2.linha][ataque2.coluna] = "X";
       placar2++;
       jogo = false;
     } else {
-      tabuleiro[linha][coluna] = "O";
+      tabuleiro[ataque2.linha][ataque2.coluna] = "2"; // ataque time 2
       print("${vermelho}Time 2 errou.${reset}");
     }
   }
@@ -87,26 +82,64 @@ void main() {
   mostrarTabuleiro(tabuleiro);
 }
 
+// função criada para evitar repetição de código ao ler coordenadas
+Ponto lerPonto() {
+  int linha;
+  int coluna;
+
+  while (true) {
+    try {
+      stdout.write("Linha (0-15): ");
+      linha = int.parse(stdin.readLineSync()!);
+
+      stdout.write("Coluna (0-15): ");
+      coluna = int.parse(stdin.readLineSync()!);
+
+      if (linha < 0 || linha > 15 || coluna < 0 || coluna > 15) {
+        print("${vermelho}Erro: valores devem estar entre 0 e 15!${reset}");
+        continue;
+      }
+
+      return Ponto(linha, coluna);
+
+    } catch (e) {
+      print("${vermelho}Erro: digite apenas números!${reset}");
+    }
+  }
+}
+
+// TABULEIRO COM NUMERAÇÃO EM CIMA E ALINHAMENTO CORRIGIDO
 void mostrarTabuleiro(List<List<String>> tabuleiro) {
 
   print("");
 
-  for (int i = 0; i < tabuleiro.length; i++) { //loop das linhas
-
+  // topo (colunas)
+  stdout.write("    ");
+  for (int i = 0; i < tabuleiro.length; i++) {
     stdout.write(i.toString().padLeft(2) + " ");
+  }
+  print("");
 
-    for (int j = 0; j < tabuleiro[i].length; j++) { //loop das colunas
+  for (int i = 0; i < tabuleiro.length; i++) {
+
+    // lateral (linhas)
+    stdout.write(i.toString().padLeft(2) + "  ");
+
+    for (int j = 0; j < tabuleiro[i].length; j++) {
 
       String valor = tabuleiro[i][j];
 
-      if (valor == "X") { //se for X, imprime em vermelho, se for O, amarelo, senão azul.
-        stdout.write("${vermelho}X${reset} ");
+      if (valor == "X") {
+        stdout.write("${vermelho}X${reset}  ");
       } 
-      else if (valor == "O") {
-        stdout.write("${amarelo}O${reset} "); //marca os erros em amarelo para destacar, já que o mar é azul. O X é vermelho para destacar o acerto.
+      else if (valor == "1") {
+        stdout.write("${verde}O${reset}  ");
+      } 
+      else if (valor == "2") {
+        stdout.write("${amarelo}O${reset}  ");
       } 
       else {
-        stdout.write("${azul}~${reset} "); //mar é azul
+        stdout.write("${azul}~${reset}  ");
       }
 
     }
